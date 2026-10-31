@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#05060e">
+<meta name="description" content="NEON STORM — neon temalı bullet-heaven survivor oyunu. Hayatta kal, seviye atla, fırtınayı yönet.">
+<title>NEON STORM — Neon Survivor Arena</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,3 29,28 3,28' fill='%2322d3ee'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=2.36.0">
+</head>
+<body>
+<div id="vignette"></div>
+<canvas id="game"></canvas>
+<div id="joystick"><div id="joy-base"></div><div id="joy-knob"></div></div>
+
+<!-- ============ HUD ============ -->
+<div id="hud" class="hidden">
+  <div id="hud-top">
+    <div id="hp-wrap"><div id="hp-bar"></div><span id="hp-text">100/100</span></div>
+    <div id="timer">00:00</div>
+    <div id="hud-right">
+      <div id="kills">AV 0</div>
+      <div id="coins-hud">◈ 0</div>
+      <button id="btn-pause" aria-label="Duraklat">II</button>
+    </div>
+  </div>
+  <div id="xp-wrap"><div id="xp-bar"></div></div>
+  <div id="lvl-badge">SVY 1</div>
+  <div id="combo"></div>
+  <div id="boss-banner" class="hidden">BOSS YAKLAŞIYOR — ÖDÜL YOLDA!</div>
+  <div id="evo-chip" class="hidden">EVRİME HAZİR — EVRİM KARTI GARANTİLİ</div>
+  <div id="fps" class="hidden">FPS 60</div>
+</div>
+
+<!-- ============ ANA MENÜ ============ -->
+<div id="menu" class="overlay hidden"><div class="panel menu-panel">
+  <div class="logo">NEON<span>STORM</span></div>
+  <div class="tagline">ARENA SANA KARŞI — HAYATTA KAL</div>
+  <div class="menu-stats" id="menu-stats"></div>
+  <button class="btn primary big" id="btn-play">▶ OYNA</button>
+  <div class="btn-row">
+    <button class="btn wide" id="btn-map">BÖLÜMLER</button>
+    <button class="btn wide" id="btn-dungeons">ZİNDANLAR</button>
+  </div>
+  <div class="menu-sec">GELİŞİM</div>
+  <div class="btn-row">
+    <button class="btn mid" id="btn-collect">ÇAĞRI ★</button>
+    <button class="btn mid" id="btn-equip">EKİPMAN</button>
+    <button class="btn mid" id="btn-pass">YILDIZ YOLU</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn mid" id="btn-shop">MAĞAZA</button>
+    <button class="btn mid" id="btn-quests">GÖREVLER</button>
+  </div>
+  <div class="chip-row">
+    <button class="chip" id="btn-daily">GÜNLÜK ÖDÜL</button>
+    <button class="chip" id="btn-ach">BAŞARIMLAR</button>
+    <button class="chip" id="btn-board">SIRALAMA</button>
+    <button class="chip" id="btn-how">NASIL OYNANIR</button>
+  </div>
+  <div class="set-row">
+    <button class="chip tiny" id="tg-sfx">SES: AÇIK</button>
+    <button class="chip tiny" id="tg-music">MÜZİK: AÇIK</button>
+    <button class="chip tiny" id="tg-hap">TİTREŞİM: AÇIK</button>
+  </div>
+  <div class="coins-line">KASA: ◈ <span id="menu-coins">0</span></div>
+  <div class="footer">NEON STORM v2.36 · <a href="privacy.html" style="color:#4a5578">GİZLİLİK</a></div>
+</div></div>
+
+<!-- ============ TOPLAMA (GACHA + PİLOTLAR SEKME) ============ -->
+<div id="collect" class="overlay hidden"><div class="panel wide">
+  <h2>TOPLAMA — YILDIZ ÇAĞRISI</h2>
+  <div class="coins-line">ÖZ: ✧ <span id="col-oz">0</span> · PARÇA: ◇ <span id="col-shards">0</span> · ŞANS: <span id="col-pity">0/50</span></div>
+  <div class="btn-row collect-tabs">
+    <button class="btn tab active" id="tab-pulls">ÇEKİLİŞ</button>
+    <button class="btn tab" id="tab-pilots">PİLOTLAR</button>
+  </div>
+  <div id="col-pull-sec">
+    <div class="btn-row">
+      <button class="btn" id="btn-pull1">ÇEK ✧ 100</button>
+      <button class="btn primary" id="btn-pull10">ÇEK x10 · ✧ 900</button>
+    </div>
+    <div id="col-rates" class="muted" style="font-size:11px;letter-spacing:.5px"></div>
+    <div id="col-results"></div>
+  </div>
+  <div id="col-pilot-sec" class="hidden">
+    <div id="col-pilot-list"></div>
+    <h3 style="margin:14px 0 6px">PİLOT YILDIZLARI</h3>
+    <div id="col-stars"></div>
+  </div>
+  <button class="btn" id="btn-collect-back">GERİ</button>
+</div></div>
+
+<!-- ============ EKİPMAN ============ -->
+<div id="equip" class="overlay hidden"><div class="panel wide">
+  <h2>EKİPMAN — 6 YUVA</h2>
+  <div class="coins-line">ALTIN: ⬡ <span id="eq-gold">0</span> · PARÇA: ◇ <span id="eq-shards">0</span></div>
+  <div id="eq-slots"></div>
+  <h3 style="margin:14px 0 6px">BİRLEŞTİRME — 3 AYNI → 1 ÜST</h3>
+  <div id="eq-fuse"></div>
+  <h3 style="margin:14px 0 6px">ENVANTER</h3>
+  <div id="eq-inv"></div>
+  <div class="muted" id="eq-total" style="margin:8px 0"></div>
+  <div class="muted" id="eq-set" style="display:none;margin:4px 0 8px;color:#a5b4fc"></div>
+  <button class="btn" id="btn-equip-back">GERİ</button>
+</div></div>
+
+<!-- ============ BÖLÜMLER ============ -->
+<div id="map" class="overlay hidden"><div class="panel wide">
+  <h2>BÖLÜM HARİTASI — 12 BÖLÜM</h2>
+  <div id="map-list"></div>
+  <button class="btn" id="btn-map-back">GERİ</button>
+</div></div>
+
+<!-- ============ ZİNDANLAR ============ -->
+<div id="dungeons" class="overlay hidden"><div class="panel wide">
+  <h2>GÜNLÜK ZİNDANLAR</h2>
+  <div id="dn-list"></div>
+  <button class="btn" id="btn-dungeons-back">GERİ</button>
+</div></div>
+
+<!-- ============ YILDIZ YOLU (BATTLE PASS) ============ -->
+<div id="pass" class="overlay hidden"><div class="panel wide">
+  <h2>YILDIZ YOLU — SEZON</h2>
+  <div class="coins-line" id="pass-info"></div>
+  <div class="prog" style="margin:8px 0"><div class="prog-fill" id="pass-bar" style="width:0%"></div></div>
+  <div id="pass-track"></div>
+  <button class="btn primary" id="btn-pass-premium" style="margin:8px 0">PREMIUM AÇ ($9.99 · SİM)</button>
+  <button class="btn" id="btn-pass-back">GERİ</button>
+</div></div>
+
+<!-- ============ MAĞAZA ============ -->
+<div id="shop" class="overlay hidden"><div class="panel wide">
+  <h2>META MAĞAZA</h2>
+  <div class="coins-line big">KASA: ◈ <span id="shop-coins">0</span></div>
+  <div id="shop-list"></div>
+  <h3 class="shop-sub">KALICI YÜKSELTMELER + PAKETLER (GERÇEK PARA · SİMÜLASYON)</h3>
+  <div id="shop-bundles"></div>
+  <button class="btn" id="btn-shop-back">GERİ</button>
+</div></div>
+
+<!-- ============ BAŞARIMLAR ============ -->
+<div id="ach" class="overlay hidden"><div class="panel wide">
+  <h2>BAŞARIMLAR</h2>
+  <div id="ach-list"></div>
+  <button class="btn" id="btn-ach-back">GERİ</button>
+</div></div>
+
+<!-- ============ NASIL OYNANIR ============ -->
+<div id="how" class="overlay hidden"><div class="panel wide">
+  <h2>NASIL OYNANIR?</h2>
+  <div class="how-body">
+    <p><b>Hareket:</b> WASD / ok tuşları — mobilde ekrana basıp sürükle (sanal joystick).</p>
+    <p><b>Ateş:</b> Silahlar en yakın düşmana <b>otomatik</b> ateş eder. Sen sadece hayatta kal.</p>
+    <p><b>Seviye:</b> Düşmanlar neon kristal düşürür. Topla, seviye atla, 3 karttan bir yükseltme seç.</p>
+    <p><b>Evrim:</b> Bir silahı 5. seviyeye getir + eşleşen pasifi al → efsanevi evrim kartı çıkar.</p>
+    <p><b>Boss:</b> Her 90 saniyede dev düşman gelir. Altından kalkabilirsen büyük ödül.</p>
+    <p><b>Meta:</b> Run sonunda kazandığın ◈ coin ile mağazadan kalıcı güç al. Her run daha derin.</p>
+    <p><b>Kısayol:</b> P veya ESC = duraklat.</p>
+  </div>
+  <button class="btn" id="btn-how-back">GERİ</button>
+</div></div>
+
+<!-- ============ GÖREVLER ============ -->
+<div id="quests" class="overlay hidden"><div class="panel wide">
+  <h2>GÖREVLER</h2>
+  <div class="coins-line big">KASA: ◈ <span id="quest-coins">0</span></div>
+  <div id="quest-list"></div>
+  <button class="btn" id="btn-quests-back">GERİ</button>
+</div></div>
+
+<!-- ============ GÜNLÜK ÖDÜL ============ -->
+<div id="daily" class="overlay hidden"><div class="panel">
+  <h2>GÜNLÜK GİRİŞ ÖDÜLÜ</h2>
+  <div class="coins-line" id="daily-streak"></div>
+  <div id="daily-grid"></div>
+  <button class="btn primary" id="btn-daily-claim">ÖDÜLÜ AL</button>
+  <button class="btn" id="btn-daily-back">GERİ</button>
+</div></div>
+
+<!-- ============ SIRALAMA ============ -->
+<div id="board" class="overlay hidden"><div class="panel wide">
+  <h2>SIRALAMA — EN İYİ 10</h2>
+  <div id="board-list"></div>
+  <button class="btn" id="btn-board-back">GERİ</button>
+</div></div>
+
+<!-- ============ SEVİYE KARTI ============ -->
+<div id="levelup" class="overlay hidden"><div class="panel lu-panel">
+  <h2>SEVİYE ATLADIN</h2>
+  <p class="lu-sub">Bir yükseltme seç</p>
+  <div id="lu-cards"></div>
+  <button class="btn small" id="btn-reroll">YENİDEN ÇEK (1)</button>
+</div></div>
+
+<!-- ============ DURAKLAT ============ -->
+<div id="pause" class="overlay hidden"><div class="panel">
+  <h2>DURAKLATILDI</h2>
+  <div id="pause-stats" class="pause-stats"></div>
+  <button class="btn primary" id="btn-resume">DEVAM ET</button>
+  <div class="btn-row">
+    <button class="btn small" id="tg-sfx2">SES: AÇIK</button>
+    <button class="btn small" id="tg-music2">MÜZİK: AÇIK</button>
+    <button class="btn small" id="tg-hap2">TİTREŞİM: AÇIK</button>
+  </div>
+  <button class="btn danger" id="btn-quit">ANA MENÜ (İLERLEME KAYBOLUR)</button>
+</div></div>
+
+<!-- ============ OYUN SONU ============ -->
+<div id="gameover" class="overlay hidden"><div class="panel">
+  <h2 id="go-title">SİSTEM ÇÖKTÜ</h2>
+  <div id="go-newbest" class="newbest hidden">YENİ REKOR</div>
+  <div id="go-nearmiss" class="go-nearmiss hidden"></div>
+  <div id="go-stats" class="go-stats"></div>
+  <div id="go-timeline" class="go-timeline muted hidden"></div>
+  <div id="go-bestprog" class="go-bestprog hidden"></div>
+  <button class="btn primary" id="btn-retry">TEKRAR OYNA</button>
+  <button class="btn" id="btn-x2">COINLERİ x2 (REKLAM · SİMÜLASYON)</button>
+  <button class="btn" id="btn-revive">DIRIL VE DEVAM ET (REKLAM · SİMÜLASYON)</button>
+  <button class="btn small" id="btn-adcrate" style="display:none">BEDAVA KASA İZLE — EKİPMAN KAZAN (3/3)</button>
+  <button class="btn small" id="btn-go-menu">ANA MENÜ</button>
+</div></div>
+
+<!-- ============ REKLAM ÖDÜLÜ SEÇİMİ (v2.7) ============ -->
+<div id="reward-choice" class="overlay hidden"><div class="panel">
+  <h2>REKLAM ÖDÜLÜ — BİRİNİ SEÇ</h2>
+  <div class="reward-cards">
+    <button class="btn reward-card" data-x2="coin"><b>◈ COIN x2</b><span>Koşudaki tüm coinler 2 katı</span></button>
+    <button class="btn reward-card" data-x2="gold"><b>⬡ +500 ALTIN</b><span>Sarf marketinde değerli</span></button>
+    <button class="btn reward-card" data-x2="oz"><b>✧ +30 ÖZ</b><span>Çekilişe 1/3 yol</span></button>
+  </div>
+  <button class="btn" id="btn-x2-cancel" style="margin-top:12px">VAZGEÇ</button>
+</div></div>
+
+<!-- ============ SAHTE SATIN ALMA (v2.7 · gerçek SDK bağlantı noktası buyBundle) ============ -->
+<div id="pay-overlay" class="overlay hidden"><div class="panel ad-panel">
+  <h2>SATIN ALMA (SİMÜLASYON)</h2>
+  <div class="ad-box">GEREKÇE: App Store IAP · gerçek SDK bağlantı noktası hazır</div>
+  <div id="pay-count">3</div>
+</div></div>
+
+<!-- ============ SAHTE REKLAM ============ -->
+<div id="ad-overlay" class="overlay hidden"><div class="panel ad-panel">
+  <h2>REKLAM (SİMÜLASYON)</h2>
+  <div class="ad-box">GEREKÇE: rewarded video · 3 saniye</div>
+  <div id="ad-count">3</div>
+</div></div>
+
+<!-- ============ EĞİTİM ============ -->
+<div id="tutorial" class="overlay hidden"><div class="panel">
+  <h2>HAREKETE GEÇ</h2>
+  <div class="how-body">
+    <p>WASD / ok tuşları ile hareket et — mobilde bas-sürükle.</p>
+    <p>Silahlar otomatik ateşler. Neon kristalleri topla ve seviye atla.</p>
+    <p>Her seviyede 3 karttan birini seç. 90 saniyede bir boss gelir.</p>
+    <p>Amaç basit: <b>HAYATTA KAL.</b></p>
+  </div>
+  <button class="btn primary" id="btn-tut-ok">ANLADIM</button>
+</div></div>
+
+<div id="toasts"></div>
+<div id="err" class="hidden"></div>
+
+<script src="js/audio.js?v=2.36.0"></script>
+<script src="js/core.js?v=2.36.0"></script>
+<script src="js/quests.js?v=2.36.0"></script>
+<script src="js/experiments.js?v=2.36.0"></script>
+<script src="js/analytics.js?v=2.36.0"></script>
+<script src="js/board.js?v=2.36.0"></script>
+<script src="js/meta_data.js?v=2.36.0"></script>
+<script src="js/meta.js?v=2.36.0"></script>
+<script src="js/engine.js?v=2.36.0"></script>
+<script src="js/game.js?v=2.36.0"></script>
+<script src="js/ui.js?v=2.36.0"></script>
+</body>
+</html>

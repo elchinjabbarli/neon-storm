@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>NEON STORM — Gizlilik Politikası</title>
+<style>
+:root{
+  --bg:#05060e; --bg2:#0a0d1d;
+  --cyan:#22d3ee; --mag:#f0abfc; --gold:#fbbf24; --green:#34d399;
+  --ink:#e2e8f0; --dim:#7c8db5;
+  --panel:rgba(10,14,29,.92);
+  --line:rgba(34,211,238,.25);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{min-height:100%;background:var(--bg);
+  font-family:'Rajdhani','Segoe UI',system-ui,sans-serif;color:var(--ink);
+  -webkit-text-size-adjust:100%}
+.wrap{max-width:640px;margin:0 auto;padding:24px 20px calc(40px + env(safe-area-inset-bottom))}
+h1{color:var(--cyan);font-size:26px;letter-spacing:2px;margin-bottom:2px}
+.sub{color:var(--dim);font-size:14px;letter-spacing:1px;margin-bottom:20px}
+h2{color:var(--mag);font-size:17px;letter-spacing:1px;margin:22px 0 8px;
+  border-bottom:1px solid var(--line);padding-bottom:6px}
+p,li{font-size:15px;line-height:1.65;color:var(--ink)}
+ul{padding-left:20px;margin:6px 0}
+li{margin-bottom:6px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:14px 16px;margin:12px 0}
+.tag{display:inline-block;font-size:12px;letter-spacing:1px;color:var(--bg);
+  background:var(--green);border-radius:6px;padding:2px 8px;margin-right:6px;vertical-align:middle}
+.tag.cyan{background:var(--cyan)}
+.tag.gold{background:var(--gold)}
+code{background:rgba(34,211,238,.12);color:var(--cyan);border-radius:4px;
+  padding:1px 5px;font-size:13px}
+a{color:var(--cyan)}
+.upd{color:var(--dim);font-size:13px;margin-top:24px;border-top:1px solid var(--line);padding-top:10px}
+.home{display:inline-block;margin-top:18px;color:var(--bg);background:var(--cyan);
+  text-decoration:none;font-weight:700;letter-spacing:1px;border-radius:8px;padding:10px 18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>NEON STORM</h1>
+  <div class="sub">GİZLİLİK POLİTİKASI · v2.36 · son güncelleme: 2026-10-31</div>
+
+  <div class="card"><span class="tag">ÖZET</span>
+    <p>NEON STORM <b>verilerinizi sunucuya göndermez</b>. Tüm oyun verisi yalnızca kendi
+    cihazınızda saklanır. Reklam veya satın alma SDK'ları etkinleştiğinde bu sayfa güncellenir.</p>
+  </div>
+
+  <h2>1. Hangi Veriler Saklanır?</h2>
+  <ul>
+    <li><b>İlerleme kaydı</b> — seviye, para, ekipman, görev/battle pass durumu:
+      cihazın yerel depolamasında (<code>localStorage</code>), oyunun kendi anahtarları altında.
+      Hesap gerekmez; isim, e-posta, telefon toplanmaz.</li>
+    <li><b>Telemetri arabelleği (ANLT)</b> — oynanış olayları (ilk av, ilk boss, ölüm süresi gibi
+      <i>zaman damgaları</i>) yerel olarak <code>neonstorm_anlt_v1</code> anahtarında, en fazla
+      <b>250 olay</b> tutulur. Amaç: kendi cihazınızda denge analizi ve hata ayıklama.</li>
+    <li><b>Skor tablosu</b> — yerel çalışır. Uzak sunucu özelliği varsayılan olarak
+      <b>kapalıdır</b>; oyun hiçbir skor servisine bağlanmaz.</li>
+  </ul>
+
+  <h2>2. Veriler Nereye Gider?</h2>
+  <div class="card"><span class="tag cyan">DÜRÜST BEYAN</span>
+    <p>Telemetri modülünde <b>endpoint boştur</b>: toplansa bile arabellek
+    <b>hiçbir sunucuya gönderilmez</b>, ağ isteği yapılmaz. Uygulama offline çalışır;
+    üçüncü taraf analitik/paketleyici SDK kullanılmaz.</p>
+  </div>
+
+  <h2>3. Reklamlar ve Satın Almalar</h2>
+  <ul>
+    <li><b>Bu sürümde (v2.36)</b> reklamlar ve satın almalar web sürümünde yalnız simülasyondur;
+    gerçek ağ çağrısı yapılmaz.</li>
+    <li><b>iOS uygulamasında</b> AdMob (ödüllü reklam) ve StoreKit (coin paketleri) SDK'ları
+    hazırlanmaktadır. Bu SDK'lar canlıya alındığında ilgili bölüm burada güncellenecek ve
+    SDK'ların kendi gizlilik beyanları (Google / Apple) bağlantısıyla listelenecektir.</li>
+  </ul>
+
+  <h2>4. Verilerinizi Silmek</h2>
+  <p>Uygulamayı/iOS deposunu cihazdan silmek, <code>localStorage</code> dahil tüm oyun verisini
+  ve telemetri arabelleğini kalıcı olarak kaldırır. Ayrıca oyun içi seçenekler ekranındaki
+  <b>SIFIRLA</b> düğmesi kaydı anında temizler.</p>
+
+  <h2>5. Çocukların Gizliliği</h2>
+  <p>Oyun çevrimdışı çalıştığı ve kişisel veri toplamadığı için 4+ yaş derecelendirmesine
+  uygundur; bilinçli veri toplama veya takip yoktur.</p>
+
+  <h2>6. İletişim</h2>
+  <p>Sorularınız için: <code>cabbarlielchin@gmail.com</code></p>
+
+  <div class="upd">Bu politika oyun sürümüyle birlikte güncellenir. NEON STORM v2.36 · 2026-10-31</div>
+  <a class="home" href="index.html">&larr; OYUNA DÖN</a>
+</div>
+</body>
+</html>
